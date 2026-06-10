@@ -6,10 +6,11 @@ import { bus } from './EventBus.js';
  * lifecycle management (important for the Three.js globe).
  */
 export class Router {
-  constructor(routes, outlet) {
+  constructor(routes, outlet, options = {}) {
     this.routes = routes;          // { path: { title, factory } }
     this.outlet = outlet;
     this.current = null;
+    this.beforeResolve = options.beforeResolve || null;
     window.addEventListener('hashchange', () => this.resolve());
   }
 
@@ -20,9 +21,13 @@ export class Router {
     else location.hash = path;
   }
 
-  resolve() {
+  async resolve() {
     const path = location.hash.replace('#', '') || '/command-center';
     const route = this.routes[path] || this.routes['/command-center'];
+    if (this.beforeResolve) {
+      const allowed = await this.beforeResolve(path, route);
+      if (allowed === false) return;
+    }
 
     if (this.current?.destroy) this.current.destroy();
     this.outlet.innerHTML = '';
