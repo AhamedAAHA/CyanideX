@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyanideX // Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+  <div class="cx-backdrop"></div>
+  <div class="cx-scanlines"></div>
+
+  <main class="auth">
+    <div class="auth-field">
+      <span class="ringpulse"></span>
+      <span class="ringpulse"></span>
+      <span class="ringpulse"></span>
+    </div>
+
+    <a href="index.html" class="auth-back mono">← Back to Main</a>
+
+    <div class="auth-hero cx-enter">
+      <a href="index.html" class="brand-logo" title="Back to Main Page">
+        <img class="cx-logo cx-logo--auth" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
+      </a>
+      <p class="auth-sub">SIGN UP · NEW OPERATOR REGISTRATION</p>
+    </div>
+
+    <section class="glass glass--cyan holo auth-card cx-enter">
+      <form id="signup-form" autocomplete="off">
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input class="input" id="name" type="text" placeholder="Kai Tanaka" required />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" id="email" type="email" placeholder="operator@gmail.com" required />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input class="input" id="password" type="password" placeholder="Min. 8 characters" minlength="8" required />
+        </div>
+        <div class="field">
+          <label for="confirm">Confirm Password</label>
+          <input class="input" id="confirm" type="password" placeholder="Repeat password" minlength="8" required />
+        </div>
+
+        <p class="auth-hint" style="margin:0 0 14px">New accounts start as <span class="mono" style="color:var(--cyan)">Viewer</span> clearance. Admin can upgrade roles in Supabase.</p>
+
+        <p id="auth-error" class="auth-error hidden"></p>
+        <p id="auth-success" class="auth-success hidden"></p>
+
+        <button class="btn btn--primary" style="width:100%" type="submit">CREATE OPERATOR ACCOUNT</button>
+      </form>
+
+      <p class="auth-switch">
+        Already registered? <a href="signin.html">Sign In</a>
+      </p>
+      <div class="auth-foot">CYANIDEX OS v1.0 · DEFENSIVE INTELLIGENCE ONLY</div>
+    </section>
+  </main>
+
+  <script type="module" src="js/signup.js"></script>
+</body>
+</html>
