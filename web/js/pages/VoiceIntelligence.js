@@ -29,24 +29,26 @@ export class VoiceIntelligence extends Component {
 
   afterRender() {
     this.$('#vi-mode').textContent = voice.supported ? 'SPEECHMATICS / BROWSER' : 'TEXT MODE';
+    if (!voice.supported) {
+      this.$('#vi-status').textContent = 'Speech input unavailable in this browser. Type a command below.';
+      this.$('#vi-mic').disabled = true;
+      this.$('#vi-mic').title = 'Speech input unavailable in this browser';
+      this.$('#vi-mic').style.opacity = '0.45';
+      this.$('#vi-mic').style.cursor = 'not-allowed';
+    }
     this.listen(this.$('#vi-mic'), 'click', () => voice.toggle());
     this.listen(this.$('#vi-send'), 'click', () => this.runTyped());
     this.listen(this.$('#vi-input'), 'keydown', (e) => { if (e.key === 'Enter') this.runTyped(); });
 
-    // Reflect voice availability up-front.
-    if (!voice.supported) {
-      this.$('#vi-mic').style.opacity = '0.45';
-      this.$('#vi-status').textContent = voice.unsupportedReason();
-      this.$('#vi-input').focus();
-    }
-
     this.onDestroy(bus.on('voice:listening', (v) => {
       this.$('#vi-mic').classList.toggle('is-live', v);
-      this.$('#vi-status').textContent = v ? '● Listening…' : 'Press to speak — or type a command below.';
-    }));
-    this.onDestroy(bus.on('voice:unsupported', (reason) => {
-      this.$('#vi-status').textContent = reason || voice.unsupportedReason();
-      this.$('#vi-input').focus();
+      if (v) {
+        this.$('#vi-status').textContent = '● Listening…';
+      } else {
+        this.$('#vi-status').textContent = voice.supported
+          ? 'Press to speak — or type a command below.'
+          : 'Speech input unavailable in this browser. Type a command below.';
+      }
     }));
     this.onDestroy(bus.on('voice:transcript', (t) => { this.$('#vi-input').value = t; }));
     this.onDestroy(bus.on('voice:result', (r) => this.showResult(r)));
