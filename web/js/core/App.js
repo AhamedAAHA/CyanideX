@@ -1,7 +1,9 @@
 import { Router } from './Router.js';
 import { bus } from './EventBus.js';
 import { store } from './Store.js';
+import { logout } from './supabaseAuth.js';
 import { voice } from './VoiceController.js';
+import { AuthGate, AUTH_REQUIRED_MESSAGE, setAuthNotice } from './authGuard.js';
 
 import { CommandCenter } from '../pages/CommandCenter.js';
 import { ThreatGlobePage } from '../pages/ThreatGlobePage.js';
@@ -20,18 +22,22 @@ import { Settings } from '../pages/Settings.js';
 export class App {
   constructor(root) {
     this.root = root;
+    this.authGate = new AuthGate();
     this.session = store.session;
-    if (!this.session) { window.location.href = 'index.html'; return; }
 
     this.nav = [
       { group: 'Operations', items: [
+        { path: '/dashboard', label: 'Command Center', ico: '◈', title: 'Command Center', page: CommandCenter },
         { path: '/command-center', label: 'Command Center', ico: '◈', title: 'Command Center', page: CommandCenter },
         { path: '/globe', label: '3D Threat Globe', ico: '◍', title: '3D Threat Globe', page: ThreatGlobePage },
-        { path: '/osint', label: 'OSINT Signals', ico: '⛗', title: 'OSINT Intelligence', page: OsintSignals },
+        { path: '/intel', label: 'OSINT Signals', ico: '⛗', title: 'OSINT Intelligence', page: OsintSignals },
+        { path: '/signals', label: 'OSINT Signals', ico: '⛗', title: 'OSINT Intelligence', page: OsintSignals },
       ]},
       { group: 'Intelligence', items: [
+        { path: '/forecasts', label: 'AI Forecasting', ico: '◢', title: 'AI Threat Forecasting', page: AiForecasting },
         { path: '/forecasting', label: 'AI Forecasting', ico: '◢', title: 'AI Threat Forecasting', page: AiForecasting },
         { path: '/risk-dna', label: 'Risk DNA', ico: '⬡', title: 'Cyber Risk DNA', page: RiskDna },
+        { path: '/reports', label: 'Incident Reports', ico: '⚑', title: 'Incident Reports', page: IncidentReports },
         { path: '/incidents', label: 'Incident Reports', ico: '⚑', title: 'Incident Reports', page: IncidentReports },
         { path: '/briefings', label: 'Executive Briefings', ico: '✦', title: 'Executive Briefings', page: ExecutiveBriefings },
       ]},
@@ -47,12 +53,44 @@ export class App {
     });
   }
 
-  start() {
-    if (!this.session) return;
+  async start() {
+    this.renderLoading('Verifying session...');
+    const auth = await this.authGate.hydrateSession();
+    if (!auth) return;
+
+    this.session = auth.profile;
     this.renderShell();
-    this.router = new Router(this.routes, document.getElementById('view'));
+    this.router = new Router(this.routes, document.getElementById('view'), {
+      beforeResolve: async () => {
+        const verified = await this.authGate.ensureAuthenticated({ notice: AUTH_REQUIRED_MESSAGE });
+        return Boolean(verified);
+      },
+    });
     this.wire();
+    this.onAuthChange = await this.authGate.handleAuthStateChange(
+      (current) => {
+        this.session = current.profile;
+        this.refreshIdentity(current.profile);
+      },
+      () => {
+        setAuthNotice(AUTH_REQUIRED_MESSAGE);
+        window.location.replace('signin.html');
+      }
+    );
     this.router.start();
+  }
+
+  renderLoading(message) {
+    this.root.innerHTML = `
+      <div class="cx-backdrop"></div>
+      <div class="cx-scanlines"></div>
+      <div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:rgba(3,6,10,.92);color:var(--text)">
+        <div class="glass holo" style="max-width:460px;width:100%;padding:28px 24px;text-align:center">
+          <div class="mono" style="font-size:.62rem;letter-spacing:2px;color:var(--cyan);text-transform:uppercase;margin-bottom:10px">CyanideX Security Gate</div>
+          <div style="font-family:var(--font-display);font-size:1.05rem;margin-bottom:8px">Authentication Check</div>
+          <div class="dim" style="font-size:.9rem;line-height:1.6">${message}</div>
+        </div>
+      </div>`;
   }
 
   renderShell() {
@@ -62,11 +100,11 @@ export class App {
       <div class="cx-scanlines"></div>
       <div class="os">
         <aside class="rail" id="rail">
-          <div class="brand" style="flex-direction:column;align-items:flex-start;gap:2px">
-            <a href="index.html" title="Back to home" aria-label="CyanideX home">
-              <span class="cx-logo cx-logo--rail" role="img" aria-label="CyanideX"></span>
+          <div class="brand">
+            <a href="index.html" class="brand-logo" title="Back to Main Page">
+              <img class="cx-logo cx-logo--rail" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
             </a>
-            <div class="ver" style="padding-left:4px">THREAT FORECASTING OS · v1.0</div>
+            <div class="ver">THREAT FORECASTING OS · v1.0</div>
           </div>
           ${this.nav.map((g) => `
             <div class="nav-group-label">${g.group}</div>
@@ -76,7 +114,7 @@ export class App {
               </a>`).join('')}
           `).join('')}
           <div class="rail-foot">
-            <div>OPERATOR · ${this.session.role.toUpperCase()}</div>
+            <div>OPERATOR · ${String(this.session.role || 'Viewer').toUpperCase()}</div>
             <div class="status-line"><span class="status-dot"></span> ALL SYSTEMS NOMINAL</div>
           </div>
         </aside>
@@ -92,6 +130,7 @@ export class App {
           <div class="clock" id="clock">--:--:--</div>
           <button class="mic-btn" id="topbar-mic" title="Voice command">◉</button>
           <div class="avatar" id="avatar" title="${this.session.name} · ${this.session.role}">${initials}</div>
+          <button class="btn btn--ghost btn--sm logout-btn" id="logout-btn" type="button">Logout</button>
         </header>
 
         <main class="view" id="view"></main>
@@ -113,15 +152,19 @@ export class App {
 
     // Voice
     const mic = document.getElementById('topbar-mic');
+    if (!voice.supported) {
+      mic.disabled = true;
+      mic.title = 'Speech input unavailable in this browser';
+      mic.style.opacity = '0.45';
+      mic.style.cursor = 'not-allowed';
+    }
     mic.addEventListener('click', () => voice.toggle());
     bus.on('voice:listening', (v) => mic.classList.toggle('is-live', v));
     bus.on('voice:result', (r) => { if (r.intent !== 'unknown') this.handleVoiceNav(r.intent); });
-    // If speech capture isn't available, send the operator to the text console.
-    bus.on('voice:unsupported', () => this.router.navigate('/voice'));
 
-    // Avatar -> logout
-    document.getElementById('avatar').addEventListener('click', () => {
-      if (confirm('End CyanideX session?')) { store.clearSession(); window.location.href = 'index.html'; }
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      if (confirm('End CyanideX session and return to main page?')) logout();
     });
 
     // Mobile rail
@@ -132,6 +175,17 @@ export class App {
     // Clock
     const tick = () => { document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB') + ' UTC'; };
     tick(); setInterval(tick, 1000);
+  }
+
+  refreshIdentity(profile) {
+    const avatar = document.getElementById('avatar');
+    const initials = (profile.name || 'OP').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase();
+    if (avatar) {
+      avatar.textContent = initials;
+      avatar.title = `${profile.name} · ${profile.role}`;
+    }
+    const rail = document.querySelector('.rail-foot > div');
+    if (rail) rail.textContent = `OPERATOR · ${String(profile.role || 'Viewer').toUpperCase()}`;
   }
 
   handleVoiceNav(intent) {
