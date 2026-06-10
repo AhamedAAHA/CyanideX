@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { integrationStatus } from '../config/env.js';
+import { env, integrationStatus } from '../config/env.js';
 import { pipeline } from '../services/forecasting.service.js';
 import { brightData } from '../services/brightData.service.js';
 import { aiml } from '../services/aiml.service.js';
@@ -27,6 +27,73 @@ router.get('/status', (_req, res) =>
     },
   })
 );
+
+/* Public client config (anon key is safe to expose) */
+router.get('/config/public', (_req, res) =>
+  res.json({
+    supabaseUrl: env.supabase.url || null,
+    supabaseAnonKey: env.supabase.anonKey || null,
+  })
+);
+
+/* Ensure public.users profile exists after auth (service role upsert) */
+router.post('/auth/ensure-profile', asyncRoute(async (req, res) => {
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing access token' });
+  if (!env.supabase.url || !env.supabase.serviceRoleKey) {
+    return res.status(503).json({ error: 'Supabase service role not configured' });
+  }
+
+  const userRes = await fetch(`${env.supabase.url}/auth/v1/user`, {
+    headers: { apikey: env.supabase.anonKey, Authorization: `Bearer ${token}` },
+  });
+  if (!userRes.ok) return res.status(401).json({ error: 'Invalid session' });
+  const authUser = await userRes.json();
+
+  const svcHeaders = {
+    apikey: env.supabase.serviceRoleKey,
+    Authorization: `Bearer ${env.supabase.serviceRoleKey}`,
+  };
+
+  const existingRes = await fetch(
+    `${env.supabase.url}/rest/v1/users?id=eq.${authUser.id}&select=email,full_name,role`,
+    { headers: svcHeaders }
+  );
+  const existing = await existingRes.json();
+  let profile = Array.isArray(existing) ? existing[0] : null;
+  const fallbackProfile = {
+    email: authUser.email,
+    name: authUser.user_metadata?.full_name || (authUser.email || '').split('@')[0] || 'Operator',
+    role: 'Viewer',
+  };
+
+  if (!profile) {
+    const row = {
+      id: authUser.id,
+      email: authUser.email,
+      full_name: authUser.user_metadata?.full_name || '',
+      role: 'Viewer',
+    };
+    const insertRes = await fetch(`${env.supabase.url}/rest/v1/users`, {
+      method: 'POST',
+      headers: { ...svcHeaders, 'Content-Type': 'application/json', Prefer: 'return=representation' },
+      body: JSON.stringify(row),
+    });
+    const inserted = await insertRes.json();
+    profile = Array.isArray(inserted) ? inserted[0] : inserted;
+    fallbackProfile.email = row.email;
+    fallbackProfile.name = row.full_name || fallbackProfile.name;
+    fallbackProfile.role = row.role;
+  }
+
+  res.json({
+    profile: {
+      email: profile?.email || fallbackProfile.email,
+      name: profile?.full_name || fallbackProfile.name,
+      role: profile?.role || fallbackProfile.role,
+    },
+  });
+}));
 
 /* ── Overview / command center ───────────────────────────── */
 router.get('/overview', asyncRoute(async (_req, res) => {
