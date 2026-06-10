@@ -1,6 +1,8 @@
 import { LandingScene } from './components/LandingScene.js';
+import { AuthGate, appUrl } from './core/authGuard.js';
 
 const scene = new LandingScene(document.getElementById('landing-3d'));
+const gate = new AuthGate();
 
 // Live stats from the intel pipeline
 fetch('/api/overview')
@@ -14,15 +16,26 @@ fetch('/api/overview')
   })
   .catch(() => {});
 
-// If already signed in, offer quick entry
-try {
-  if (localStorage.getItem('cyanidex.session')) {
+const enterBtn = document.getElementById('enter-command-center');
+enterBtn?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const auth = await gate.ensureAuthenticated({ redirect: false });
+  if (auth) {
+    window.location.href = appUrl('/command-center');
+  } else {
+    window.location.href = 'signin.html';
+  }
+});
+
+(async () => {
+  const auth = await gate.restoreIfAuthenticated({ redirectOnFailure: false });
+  if (auth) {
     const enter = document.createElement('a');
-    enter.href = 'app.html';
+    enter.href = appUrl('/command-center');
     enter.className = 'btn btn--toxic btn--sm landing-resume';
     enter.textContent = 'Resume Session';
     document.querySelector('.landing-actions')?.appendChild(enter);
   }
-} catch { /* noop */ }
+})();
 
 window.addEventListener('beforeunload', () => scene.destroy());
