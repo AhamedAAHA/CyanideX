@@ -183,10 +183,23 @@ export class LandingScene {
   }
 
   _layoutScene(w) {
-    const desktop = w >= 980;
-    const scale = desktop ? 1.85 : 1.1;
-    const x = desktop ? 2.45 : 0.35;
-    const y = desktop ? -0.05 : 0.45;
+    let scale = 0.92;
+    let x = 0.7;
+    let y = 0.18;
+
+    if (w >= 1600) {
+      scale = 1.72;
+      x = 2.55;
+      y = -0.05;
+    } else if (w >= 1180) {
+      scale = 1.42;
+      x = 2.15;
+      y = 0;
+    } else if (w >= 760) {
+      scale = 1.02;
+      x = 1.2;
+      y = 0.05;
+    }
 
     this.root.position.set(x, y, 0);
     this.root.scale.setScalar(scale);

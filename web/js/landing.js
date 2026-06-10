@@ -3,6 +3,28 @@ import { AuthGate, appUrl } from './core/authGuard.js';
 
 const scene = new LandingScene(document.getElementById('landing-3d'));
 const gate = new AuthGate();
+const menuBtn = document.getElementById('landing-menu-btn');
+const menu = document.getElementById('landing-nav-menu');
+
+function setMenu(open) {
+  menuBtn?.setAttribute('aria-expanded', String(open));
+  menuBtn?.classList.toggle('is-open', open);
+  menu?.classList.toggle('is-open', open);
+}
+
+menuBtn?.addEventListener('click', () => {
+  setMenu(menuBtn.getAttribute('aria-expanded') !== 'true');
+});
+
+menu?.querySelectorAll('a').forEach((link) => {
+  link.addEventListener('click', () => setMenu(false));
+});
+
+document.addEventListener('click', (e) => {
+  if (!menu?.classList.contains('is-open')) return;
+  if (menu.contains(e.target) || menuBtn?.contains(e.target)) return;
+  setMenu(false);
+});
 
 // Live stats from the intel pipeline
 fetch('/api/overview')

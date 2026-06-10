@@ -27,13 +27,20 @@
             <span class="landing-nav-title">CyanideX OS</span>
           </a>
           <span class="spacer"></span>
-          <a class="nav-link" href="#capabilities">Capabilities</a>
-          <a class="nav-link nav-cta" href="signin.html">Sign In</a>
-          <a class="btn btn--primary btn--sm" href="signup.html">Sign Up</a>
+          <button class="landing-menu-btn" id="landing-menu-btn" type="button" aria-label="Open navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+          </button>
+          <div class="landing-nav-menu" id="landing-nav-menu">
+            <a class="nav-link is-active" href="#top">Overview</a>
+            <a class="nav-link" href="#capabilities">Capabilities</a>
+            <a class="nav-link nav-cta" href="signin.html">Sign In</a>
+            <a class="btn btn--primary btn--sm" href="signup.html">Sign Up</a>
+          </div>
         </nav>
 
         <main class="landing-main">
-          <section class="landing-hero">
+          <section class="landing-hero" id="top">
             <div class="hero-left">
               <img class="cx-logo cx-logo--hero" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
               <div class="eyebrow">◈ Multi-Modal Threat Forecasting OS</div>
