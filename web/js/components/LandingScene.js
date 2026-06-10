@@ -36,6 +36,7 @@ export class LandingScene {
     this._buildRings();
     this._buildParticles();
     this._buildGrid();
+    this._layoutScene(w);
 
     this.scene.add(new THREE.AmbientLight(0x224466, 0.9));
     const key = new THREE.DirectionalLight(0x00e5ff, 1.4);
@@ -81,7 +82,8 @@ export class LandingScene {
       new THREE.SphereGeometry(r * 1.22, 48, 48),
       new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.06, side: THREE.BackSide })
     );
-    this.scene.add(atmo);
+    this.atmo = atmo;
+    this.scene.add(this.atmo);
   }
 
   _buildRings() {
@@ -177,6 +179,27 @@ export class LandingScene {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
+    this._layoutScene(w);
+  }
+
+  _layoutScene(w) {
+    const desktop = w >= 980;
+    const scale = desktop ? 1.85 : 1.1;
+    const x = desktop ? 2.45 : 0.35;
+    const y = desktop ? -0.05 : 0.45;
+
+    this.root.position.set(x, y, 0);
+    this.root.scale.setScalar(scale);
+
+    if (this.atmo) {
+      this.atmo.position.set(x, y, 0);
+      this.atmo.scale.setScalar(scale);
+    }
+
+    this.rings?.forEach((ring) => {
+      ring.position.set(x, y, 0);
+      ring.scale.setScalar(scale);
+    });
   }
 
   destroy() {
