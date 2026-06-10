@@ -9,6 +9,8 @@ export class LandingScene {
   constructor(container) {
     this.container = container;
     this._raf = null;
+    this.disposables = [];
+    this.nodes = [];
     this._init();
     this._loadIntel();
   }
@@ -24,9 +26,9 @@ export class LandingScene {
     this.camera.position.set(0, 0.8, 7.5);
     this.camera.lookAt(0, 0, 0);
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     this.renderer.setSize(w, h);
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
     this.container.appendChild(this.renderer.domElement);
 
     this.root = new THREE.Group();
@@ -53,14 +55,16 @@ export class LandingScene {
 
   _buildGlobe() {
     const r = 2.2;
-    this.root.add(new THREE.Mesh(
+    const globe = new THREE.Mesh(
       new THREE.SphereGeometry(r * 0.99, 64, 64),
       new THREE.MeshPhongMaterial({ color: 0x041018, emissive: 0x021016, shininess: 18, transparent: true, opacity: 0.95 })
-    ));
-    this.root.add(new THREE.Mesh(
+    );
+    const wire = new THREE.Mesh(
       new THREE.SphereGeometry(r, 40, 40),
       new THREE.MeshBasicMaterial({ color: 0x0bb6cc, wireframe: true, transparent: true, opacity: 0.14 })
-    ));
+    );
+    this.root.add(globe, wire);
+    this.disposables.push(globe.geometry, globe.material, wire.geometry, wire.material);
 
     const dots = 1800;
     const pos = new Float32Array(dots * 3);
@@ -75,7 +79,10 @@ export class LandingScene {
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    this.root.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0x1d8a9e, size: 0.02, transparent: true, opacity: 0.55 })));
+    const dotsMat = new THREE.PointsMaterial({ color: 0x1d8a9e, size: 0.02, transparent: true, opacity: 0.55 });
+    const dotsMesh = new THREE.Points(g, dotsMat);
+    this.root.add(dotsMesh);
+    this.disposables.push(g, dotsMat);
 
     // Atmospheric glow
     const atmo = new THREE.Mesh(
@@ -84,6 +91,7 @@ export class LandingScene {
     );
     this.atmo = atmo;
     this.scene.add(this.atmo);
+    this.disposables.push(atmo.geometry, atmo.material);
   }
 
   _buildRings() {
@@ -97,6 +105,7 @@ export class LandingScene {
       this.rings = this.rings || [];
       this.rings.push(ring);
       this.scene.add(ring);
+      this.disposables.push(ring.geometry, ring.material);
     });
   }
 
@@ -110,8 +119,10 @@ export class LandingScene {
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    this.particles = new THREE.Points(g, new THREE.PointsMaterial({ color: 0x5ec8e8, size: 0.06, transparent: true, opacity: 0.45 }));
+    const mat = new THREE.PointsMaterial({ color: 0x5ec8e8, size: 0.055, transparent: true, opacity: 0.38 });
+    this.particles = new THREE.Points(g, mat);
     this.scene.add(this.particles);
+    this.disposables.push(g, mat);
   }
 
   _buildGrid() {
@@ -120,6 +131,7 @@ export class LandingScene {
     grid.material.opacity = 0.18;
     grid.material.transparent = true;
     this.scene.add(grid);
+    this.disposables.push(grid.geometry, grid.material);
   }
 
   _latLon(lat, lon, r) {
@@ -145,6 +157,8 @@ export class LandingScene {
         );
         dot.position.copy(v);
         this.root.add(dot);
+        this.nodes.push(dot);
+        this.disposables.push(dot.geometry, dot.material);
       });
       (data.paths || []).slice(0, 8).forEach((p) => this._addArc(p));
     } catch { /* static globe still renders */ }
@@ -161,13 +175,21 @@ export class LandingScene {
       new THREE.LineBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.28 })
     );
     this.root.add(line);
+    this.disposables.push(line.geometry, line.material);
   }
 
   _animate() {
     const t = performance.now() * 0.001;
-    this.root.rotation.y = t * 0.22;
-    this.root.rotation.x = Math.sin(t * 0.15) * 0.08;
+    this.root.rotation.y = t * 0.18;
+    this.root.rotation.x = Math.sin(t * 0.14) * 0.055;
+    this.camera.position.x = Math.sin(t * 0.18) * 0.14;
+    this.camera.position.y = 0.8 + Math.cos(t * 0.12) * 0.08;
+    this.camera.lookAt(0.55, 0, 0);
     this.rings?.forEach((r, i) => { r.rotation.z = t * (0.08 + i * 0.04); });
+    this.nodes.forEach((node, i) => {
+      const pulse = 1 + Math.sin(t * 2.2 + i * 0.7) * 0.28;
+      node.scale.setScalar(pulse);
+    });
     if (this.particles) this.particles.rotation.y = t * 0.03;
     this.renderer.render(this.scene, this.camera);
     this._raf = requestAnimationFrame(() => this._animate());
@@ -183,21 +205,21 @@ export class LandingScene {
   }
 
   _layoutScene(w) {
-    let scale = 0.92;
-    let x = 0.7;
-    let y = 0.18;
+    let scale = 0.82;
+    let x = 0.55;
+    let y = 0.12;
 
     if (w >= 1600) {
-      scale = 1.72;
-      x = 2.55;
+      scale = 1.56;
+      x = 2.35;
       y = -0.05;
     } else if (w >= 1180) {
-      scale = 1.42;
-      x = 2.15;
+      scale = 1.22;
+      x = 1.95;
       y = 0;
     } else if (w >= 760) {
-      scale = 1.02;
-      x = 1.2;
+      scale = 0.92;
+      x = 0.95;
       y = 0.05;
     }
 
@@ -218,6 +240,9 @@ export class LandingScene {
   destroy() {
     cancelAnimationFrame(this._raf);
     window.removeEventListener('resize', this._onResize);
+    this.disposables.forEach((item) => item?.dispose?.());
+    this.disposables = [];
+    this.nodes = [];
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
