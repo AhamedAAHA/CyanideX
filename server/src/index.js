@@ -1,31 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import app from './app.js';
 import { env, integrationStatus } from './config/env.js';
-import apiRouter from './routes/index.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const webRoot = path.resolve(__dirname, '../../web');
-
-const app = express();
-
-app.use(cors());
-app.use(express.json({ limit: '2mb' }));
-if (env.nodeEnv !== 'test') app.use(morgan('dev'));
-
-// API namespace
-app.use('/api', apiRouter);
-
-// Static frontend (the CyanideX OS)
-app.use(express.static(webRoot));
-
-// Dashboard SPA fallback — only for /app routes; static files serve index/signin/signup.
-app.get(['/app', '/app.html'], (_req, res) => {
-  res.sendFile(path.join(webRoot, 'app.html'));
-});
-
+/** Local development entry — Vercel uses api/index.js instead. */
 app.listen(env.port, () => {
   const s = integrationStatus();
   /* eslint-disable no-console */

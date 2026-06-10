@@ -2,7 +2,13 @@ import { fmt } from './Component.js';
 
 /** Toast notifications. */
 let toastWrap;
+let lastToast = { msg: '', ts: 0 };
 export function toast(msg, ms = 3200) {
+  // Prevent rapid duplicate toasts (e.g. unsupported SpeechRecognition firing twice).
+  const now = Date.now();
+  if (msg === lastToast.msg && now - lastToast.ts < 1200) return;
+  lastToast = { msg, ts: now };
+
   if (!toastWrap) {
     toastWrap = document.createElement('div');
     toastWrap.className = 'cx-toast-wrap';

@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node server/src/index.js",
     "start": "node server/src/index.js",
+    "vercel-build": "node -e \"console.log('CyanideX Vercel build OK')\"",
     "seed": "node server/src/scripts/seedCheck.js",
     "seed:users": "node server/src/scripts/seedUsers.js"
   },

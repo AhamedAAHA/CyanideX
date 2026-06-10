@@ -51,6 +51,13 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0.78;
+  /* Keep the 3D globe visually in the right column on desktop so it never fights the hero copy. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 40%, #000 58%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, transparent 40%, #000 58%, #000 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .landing-overlay {
@@ -483,6 +490,8 @@
 @media (max-width: 1180px) {
   #landing-3d {
     opacity: 0.48;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .landing-overlay {
