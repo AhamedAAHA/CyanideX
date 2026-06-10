@@ -185,6 +185,8 @@ as $$
   select role from public.users where id = auth.uid();
 $$;
 
+grant execute on function public.cx_user_role() to authenticated;
+
 -- ╔══════════════════════════════════════════════════════════════╗
 -- ║  Row Level Security                                            ║
 -- ║  Viewer  : read intelligence                                  ║
@@ -200,9 +202,11 @@ alter table public.risk_dna            enable row level security;
 alter table public.system_logs         enable row level security;
 alter table public.executive_briefings enable row level security;
 
--- users: a person can read/update their own profile; Admin reads all
+-- users: self-read for login; Admin reads all profiles
 create policy "users_self_select" on public.users
-  for select to authenticated using (id = auth.uid() or public.cx_user_role() = 'Admin');
+  for select to authenticated using (id = auth.uid());
+create policy "users_admin_select" on public.users
+  for select to authenticated using (public.cx_user_role() = 'Admin');
 create policy "users_self_update" on public.users
   for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
