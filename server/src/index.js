@@ -21,10 +21,9 @@ app.use('/api', apiRouter);
 // Static frontend (the CyanideX OS)
 app.use(express.static(webRoot));
 
-// SPA-style fallback: serve the dashboard shell for unknown non-API routes.
-app.get(/^\/(?!api\/).*/, (req, res) => {
-  const target = req.path === '/' ? 'index.html' : 'app.html';
-  res.sendFile(path.join(webRoot, target));
+// Dashboard SPA fallback — only for /app routes; static files serve index/signin/signup.
+app.get(['/app', '/app.html'], (_req, res) => {
+  res.sendFile(path.join(webRoot, 'app.html'));
 });
 
 app.listen(env.port, () => {
