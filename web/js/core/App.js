@@ -27,17 +27,13 @@ export class App {
 
     this.nav = [
       { group: 'Operations', items: [
-        { path: '/dashboard', label: 'Command Center', ico: '◈', title: 'Command Center', page: CommandCenter },
         { path: '/command-center', label: 'Command Center', ico: '◈', title: 'Command Center', page: CommandCenter },
         { path: '/globe', label: '3D Threat Globe', ico: '◍', title: '3D Threat Globe', page: ThreatGlobePage },
-        { path: '/intel', label: 'OSINT Signals', ico: '⛗', title: 'OSINT Intelligence', page: OsintSignals },
-        { path: '/signals', label: 'OSINT Signals', ico: '⛗', title: 'OSINT Intelligence', page: OsintSignals },
+        { path: '/osint', label: 'OSINT Signals', ico: '⛗', title: 'OSINT Intelligence', page: OsintSignals },
       ]},
       { group: 'Intelligence', items: [
-        { path: '/forecasts', label: 'AI Forecasting', ico: '◢', title: 'AI Threat Forecasting', page: AiForecasting },
         { path: '/forecasting', label: 'AI Forecasting', ico: '◢', title: 'AI Threat Forecasting', page: AiForecasting },
         { path: '/risk-dna', label: 'Risk DNA', ico: '⬡', title: 'Cyber Risk DNA', page: RiskDna },
-        { path: '/reports', label: 'Incident Reports', ico: '⚑', title: 'Incident Reports', page: IncidentReports },
         { path: '/incidents', label: 'Incident Reports', ico: '⚑', title: 'Incident Reports', page: IncidentReports },
         { path: '/briefings', label: 'Executive Briefings', ico: '✦', title: 'Executive Briefings', page: ExecutiveBriefings },
       ]},
@@ -47,9 +43,20 @@ export class App {
       ]},
     ];
 
+    this.routeAliases = {
+      '/dashboard': '/command-center',
+      '/intel': '/osint',
+      '/signals': '/osint',
+      '/forecasts': '/forecasting',
+      '/reports': '/incidents',
+    };
+
     this.routes = {};
     this.nav.flatMap((g) => g.items).forEach((i) => {
       this.routes[i.path] = { title: i.title, factory: () => new i.page() };
+    });
+    Object.entries(this.routeAliases).forEach(([alias, target]) => {
+      this.routes[alias] = this.routes[target];
     });
   }
 
@@ -77,7 +84,7 @@ export class App {
         window.location.replace('signin.html');
       }
     );
-    this.router.start();
+    await this.router.start();
   }
 
   renderLoading(message) {
@@ -140,9 +147,10 @@ export class App {
   wire() {
     // Active nav highlight + titles
     bus.on('route:change', ({ path, title }) => {
-      document.querySelectorAll('.nav-item').forEach((n) => n.classList.toggle('is-active', n.dataset.path === path));
+      const resolvedPath = this.routeAliases[path] || path;
+      document.querySelectorAll('.nav-item').forEach((n) => n.classList.toggle('is-active', n.dataset.path === resolvedPath));
       document.getElementById('page-title').textContent = title;
-      const group = this.nav.find((g) => g.items.some((i) => i.path === path));
+      const group = this.nav.find((g) => g.items.some((i) => i.path === resolvedPath));
       document.getElementById('crumb').textContent = `CYANIDEX // ${(group?.group || 'OPERATIONS').toUpperCase()}`;
       document.getElementById('rail')?.classList.remove('is-open');
     });

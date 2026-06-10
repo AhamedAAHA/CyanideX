@@ -1,4 +1,5 @@
 import { getSupabase, loadProfile, saveSession, enterApp } from './core/supabaseAuth.js';
+import { consumeAuthNotice, clearAuthState } from './core/authGuard.js';
 
 class SignInController {
   constructor() {
@@ -12,6 +13,30 @@ class SignInController {
   async init() {
     this.supabase = await getSupabase();
     if (!this.supabase) this.showError('Supabase is not configured.');
+
+    const notice = consumeAuthNotice();
+    if (notice) this.showError(notice);
+
+    const { data } = this.supabase ? await this.supabase.auth.getSession() : { data: null };
+    const session = data?.session || null;
+    if (session) {
+      const { data: userData } = await this.supabase.auth.getUser();
+      const user = userData?.user || null;
+      if (user) {
+        const profile = await loadProfile(this.supabase, user.id, user.email || '', user);
+        saveSession({
+          id: user.id,
+          email: profile.email,
+          name: profile.name,
+          role: profile.role,
+          access_token: session.access_token,
+        });
+        window.location.replace('app.html#/command-center');
+        return;
+      }
+      clearAuthState();
+    }
+
     this.bind();
   }
 

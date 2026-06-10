@@ -11,10 +11,10 @@ export class Router {
     this.outlet = outlet;
     this.current = null;
     this.beforeResolve = options.beforeResolve || null;
-    window.addEventListener('hashchange', () => this.resolve());
+    window.addEventListener('hashchange', () => { void this.resolve(); });
   }
 
-  start() { this.resolve(); }
+  start() { return this.resolve(); }
 
   navigate(path) {
     if (location.hash === `#${path}`) this.resolve();
@@ -26,7 +26,10 @@ export class Router {
     const route = this.routes[path] || this.routes['/command-center'];
     if (this.beforeResolve) {
       const allowed = await this.beforeResolve(path, route);
-      if (allowed === false) return;
+      if (allowed === false) {
+        this.outlet.innerHTML = '';
+        return;
+      }
     }
 
     if (this.current?.destroy) this.current.destroy();
