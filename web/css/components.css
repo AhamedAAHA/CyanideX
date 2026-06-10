@@ -2,16 +2,30 @@
    CyanideX — Reusable glass / hologram components
    ─────────────────────────────────────────────────────────── */
 
-/* Brand logo (recolored to UI gradient via alpha mask) -------- */
+/* Script wordmark — same artwork, UI cyan/toxic tint only */
 .cx-logo {
   display: block;
-  background: linear-gradient(115deg, var(--cyan) 0%, #4ff5e0 45%, var(--toxic) 100%);
-  -webkit-mask: url('../assets/cyanidex-logo.png') center / contain no-repeat;
-          mask: url('../assets/cyanidex-logo.png') center / contain no-repeat;
-  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.55));
+  flex-shrink: 0;
+  object-fit: contain;
+  object-position: left center;
+  filter: saturate(1.1) brightness(1.04) drop-shadow(0 0 12px rgba(0, 229, 255, 0.42)) drop-shadow(0 0 20px rgba(182, 255, 58, 0.2));
 }
-.cx-logo--login { width: 300px; height: 130px; margin: -18px 0 -10px -10px; }
-.cx-logo--rail { width: 196px; height: 64px; margin: -10px 0 -6px -6px; }
+.cx-logo--rail {
+  width: 214px;
+  height: 62px;
+  margin: 0 2px 12px;
+  transform: scale(1.32);
+  transform-origin: left center;
+  filter: saturate(1.2) contrast(1.16) brightness(1.1) drop-shadow(0 0 14px rgba(0, 229, 255, 0.56)) drop-shadow(0 0 22px rgba(182, 255, 58, 0.28));
+}
+.cx-logo--auth {
+  width: min(420px, 94vw);
+  height: 128px;
+  margin: 0 auto 12px;
+  object-position: center;
+  transform: scale(1.18);
+  transform-origin: center center;
+}
 
 /* Glass card -------------------------------------------------- */
 .glass {
