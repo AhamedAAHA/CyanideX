@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node server/src/index.js",
     "start": "node server/src/index.js",
-    "seed": "node server/src/scripts/seedCheck.js"
+    "seed": "node server/src/scripts/seedCheck.js",
+    "seed:users": "node server/src/scripts/seedUsers.js"
   },
   "keywords": [
     "cybersecurity",
