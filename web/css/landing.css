@@ -145,13 +145,13 @@
 
 .hero-right::after {
   content: '';
-  width: min(44vw, 780px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 229, 255, 0.12);
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.06), transparent 62%);
-  box-shadow: inset 0 0 90px rgba(0, 229, 255, 0.05);
-  opacity: 0.42;
+  width: min(46vw, 820px);
+  height: min(62vh, 720px);
+  border-left: 1px solid rgba(0, 229, 255, 0.16);
+  background:
+    linear-gradient(90deg, rgba(0, 229, 255, 0.08), transparent 28%),
+    repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.03) 0 1px, transparent 1px 18px);
+  opacity: 0.36;
 }
 
 .cx-logo--hero {
@@ -385,6 +385,7 @@
 
   .hero-right::after {
     width: min(70vw, 520px);
+    height: 28vh;
   }
 
   .landing-hero h1 {
