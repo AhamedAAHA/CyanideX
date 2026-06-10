@@ -24,20 +24,37 @@ export const env = {
   },
 
   brightData: {
-    token: process.env.BRIGHTDATA_API_TOKEN || '',
-    zone: process.env.BRIGHTDATA_ZONE || '',
+    // Accept new BRIGHT_DATA_* names, with legacy fallbacks.
+    token: process.env.BRIGHT_DATA_API_KEY || process.env.BRIGHTDATA_API_TOKEN || '',
+    zone: process.env.BRIGHT_DATA_SERP_ZONE || process.env.BRIGHTDATA_ZONE || '',
     baseUrl: process.env.BRIGHTDATA_BASE_URL || 'https://api.brightdata.com',
   },
 
   aiml: {
     apiKey: process.env.AIML_API_KEY || '',
     baseUrl: process.env.AIML_BASE_URL || 'https://api.aimlapi.com/v1',
-    model: process.env.AIML_MODEL || 'gpt-4o-mini',
+    models: {
+      analysis: process.env.AIML_MODEL_ANALYSIS || 'gpt-4o-mini',
+      chat: process.env.AIML_MODEL_CHAT || 'gpt-4o',
+      search: process.env.AIML_MODEL_SEARCH || 'gpt-4o-search-preview',
+      searchMini: process.env.AIML_MODEL_SEARCH_MINI || 'gpt-4o-mini-search-preview',
+      intent: process.env.AIML_MODEL_INTENT || 'gpt-4o-mini',
+      world: process.env.AIML_MODEL_WORLD || 'gpt-4o',
+      vision: process.env.AIML_MODEL_VISION || 'gpt-4o',
+      transcribe: process.env.AIML_MODEL_TRANSCRIBE || 'whisper-1',
+    },
+    searchContextSize: process.env.AIML_SEARCH_CONTEXT_SIZE || 'medium',
+    tts: {
+      model: process.env.AIML_TTS_MODEL || 'openai/tts-1',
+      voice: process.env.AIML_TTS_VOICE || 'nova',
+      speed: Number(process.env.AIML_TTS_SPEED || 1.08),
+    },
   },
 
   speechmatics: {
     apiKey: process.env.SPEECHMATICS_API_KEY || '',
     baseUrl: process.env.SPEECHMATICS_BASE_URL || 'https://asr.api.speechmatics.com/v2',
+    ttsVoice: process.env.SPEECHMATICS_TTS_VOICE || 'sarah',
   },
 
   useFallback: bool(process.env.USE_FALLBACK_DATA, true),
