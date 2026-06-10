@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyanideX // Cyber Threat Forecasting Intelligence OS</title>
+  <meta name="description" content="CyanideX — Multi-Modal Cyber Threat Forecasting & Intelligence OS. Predict attacks before they happen." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="cx-backdrop"></div>
+  <div class="cx-scanlines"></div>
+
+  <!-- Top nav -->
+  <nav class="lz-nav">
+    <a href="index.html" aria-label="CyanideX home"><span class="cx-logo cx-logo--rail" role="img" aria-label="CyanideX"></span></a>
+    <span class="spacer"></span>
+    <a class="lz-link" href="#features">Capabilities</a>
+    <a class="btn btn--ghost btn--sm" href="login.html">Sign In</a>
+    <a class="btn btn--primary btn--sm" href="login.html#signup">Sign Up</a>
+  </nav>
+
+  <!-- Hero -->
+  <header class="lz-hero">
+    <div class="lz-hero-copy">
+      <span class="lz-tagline">◉ DEFENSIVE INTELLIGENCE · LIVE GLOBAL TELEMETRY</span>
+      <h1 class="lz-title">Predict the <b>attack</b><br />before it <span class="toxic">happens.</span></h1>
+      <p class="lz-sub">
+        CyanideX is a multi-modal cyber threat forecasting OS. It fuses OSINT collection,
+        AI forecasting, voice intelligence and 3D visualisation to surface tomorrow's
+        threats today — across every region, sector and attack vector.
+      </p>
+      <div class="lz-cta">
+        <a class="btn btn--primary" href="login.html#signup">▸ Get Started</a>
+        <a class="btn" href="login.html">Sign In</a>
+        <a class="btn btn--ghost" href="login.html">Enter Demo OS</a>
+      </div>
+      <div class="lz-stats">
+        <div class="lz-stat"><div class="n" id="s-signals">48</div><div class="l">Live Signals</div></div>
+        <div class="lz-stat"><div class="n" id="s-regions">6</div><div class="l">Regions Tracked</div></div>
+        <div class="lz-stat"><div class="n" id="s-posture">—</div><div class="l">Global Posture</div></div>
+      </div>
+    </div>
+    <div class="lz-hero-visual">
+      <div id="hero-globe"></div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section class="lz-features" id="features">
+    <h2>A Complete Cyber Command Center</h2>
+    <p class="sub">NINE INTELLIGENCE MODULES · ONE FUTURISTIC OS</p>
+    <div class="lz-grid">
+      <div class="glass lz-card holo"><div class="ico">◍</div><h3>3D Threat Globe</h3><p>Live-looking global attack paths, pulsing risk nodes and glowing region zones rendered in real-time WebGL.</p></div>
+      <div class="glass lz-card holo"><div class="ico">⛗</div><h3>OSINT Engine</h3><p>Bright Data-powered collection of breach chatter, exposed secrets, CVE trends and phishing campaigns.</p></div>
+      <div class="glass lz-card holo"><div class="ico">◢</div><h3>AI Forecasting</h3><p>Per-signal severity, attack probability, target sector, confidence and recommended mitigation.</p></div>
+      <div class="glass lz-card holo"><div class="ico">⬡</div><h3>Cyber Risk DNA</h3><p>Genomic-style behavioural fingerprint of each adversary: origin, motivation, method and impact.</p></div>
+      <div class="glass lz-card holo"><div class="ico">◉</div><h3>Voice Intelligence</h3><p>Speak read-only analyst commands — "show today's highest risk threat" — for hands-free triage.</p></div>
+      <div class="glass lz-card holo"><div class="ico">✦</div><h3>Executive Briefings</h3><p>Autonomous daily cyber briefings with predicted attacks, heatmaps and voice playback.</p></div>
+    </div>
+  </section>
+
+  <footer class="lz-foot">CYANIDEX OS v1.0 · DEFENSIVE, ANALYTICAL &amp; INTELLIGENCE-FOCUSED · © 2026</footer>
+
+  <script type="module" src="js/landing.js"></script>
+</body>
+</html>
