@@ -63,7 +63,9 @@ export class App {
       <div class="os">
         <aside class="rail" id="rail">
           <div class="brand" style="flex-direction:column;align-items:flex-start;gap:2px">
-            <span class="cx-logo cx-logo--rail" role="img" aria-label="CyanideX"></span>
+            <a href="index.html" title="Back to home" aria-label="CyanideX home">
+              <span class="cx-logo cx-logo--rail" role="img" aria-label="CyanideX"></span>
+            </a>
             <div class="ver" style="padding-left:4px">THREAT FORECASTING OS · v1.0</div>
           </div>
           ${this.nav.map((g) => `
