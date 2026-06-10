@@ -11,55 +11,33 @@ import { toast } from './ui.js';
 export class VoiceController {
   constructor() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    this.hasApi = Boolean(SR);
-    this.secure = window.isSecureContext !== false; // true on https + localhost
-    this.supported = this.hasApi && this.secure;
+    this.supported = Boolean(SR);
     this.listening = false;
-    if (this.hasApi) {
+    this.unsupportedNotified = false;
+    if (this.supported) {
       this.rec = new SR();
       this.rec.lang = 'en-US';
       this.rec.interimResults = false;
       this.rec.maxAlternatives = 1;
       this.rec.onresult = (e) => this._onResult(e);
       this.rec.onend = () => this._setListening(false);
-      this.rec.onerror = (e) => { toast(this._errorText(e.error)); this._setListening(false); };
+      this.rec.onerror = (e) => { toast('Voice error: ' + e.error); this._setListening(false); };
     }
-  }
-
-  /** Why voice isn't available, for a clear user-facing message. */
-  unsupportedReason() {
-    if (!this.hasApi) return 'Voice capture needs Chrome or Edge — use the text command box below.';
-    if (!this.secure) return 'Voice needs HTTPS or localhost — open the app via http://localhost or use the text box.';
-    return 'Voice unavailable — use the text command box below.';
-  }
-
-  _errorText(code) {
-    if (code === 'not-allowed' || code === 'service-not-allowed') return 'Microphone permission denied — allow mic access or use the text box.';
-    if (code === 'no-speech') return 'No speech detected — try again or type a command.';
-    if (code === 'network') return 'Voice service network error — type a command instead.';
-    return 'Voice error: ' + code;
   }
 
   toggle() {
     if (!this.supported) {
-      toast(this.unsupportedReason());
-      bus.emit('voice:unsupported', this.unsupportedReason());
+      if (!this.unsupportedNotified) {
+        toast('SpeechRecognition unavailable - type a command instead.');
+        this.unsupportedNotified = true;
+      }
+      bus.emit('voice:unsupported');
       return;
     }
     this.listening ? this.stop() : this.start();
   }
 
-  start() {
-    try {
-      this.rec.start();
-      this._setListening(true);
-      toast('Listening…');
-    } catch {
-      // Some engines throw if start() is called twice or without a gesture.
-      toast(this.unsupportedReason());
-      bus.emit('voice:unsupported', this.unsupportedReason());
-    }
-  }
+  start() { try { this.rec.start(); this._setListening(true); toast('Listening…'); } catch { /* already started */ } }
   stop() { try { this.rec.stop(); } catch { /* noop */ } }
 
   _setListening(v) { this.listening = v; bus.emit('voice:listening', v); }
