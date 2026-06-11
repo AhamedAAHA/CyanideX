@@ -28,8 +28,14 @@ if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 // API namespace
 app.use('/api', apiRouter);
 
-// Static frontend (landing, signin, signup, dashboard assets)
-app.use(express.static(webRoot));
+// Static frontend — CORS headers required so JS modules can load images
+// via canvas (land-mask sampling for the 3D globes).
+app.use(express.static(webRoot, {
+  setHeaders(res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  },
+}));
 
 // Explicit HTML routes (helps on serverless/CDN edge cases)
 app.get('/', (_req, res) => res.sendFile(path.join(webRoot, 'index.html')));

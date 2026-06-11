@@ -110,7 +110,7 @@ export class CyberGlobe {
 
     // Real continents: dotted landmass sampled from an equirectangular map so
     // recognisable countries appear instead of a random point cloud.
-    buildLandDots({ url: 'assets/earth-landmask.png', radius: r, step: 1.05, color: 0x4cc6e6, size: 0.022, opacity: 0.62 })
+    buildLandDots({ url: '/assets/earth-landmask.png', radius: r, step: 1.05, color: 0x4cc6e6, size: 0.022, opacity: 0.62 })
       .then(({ points, dispose }) => {
         if (!this.root) { dispose(); return; }
         this._land = points;

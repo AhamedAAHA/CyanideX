@@ -12,7 +12,7 @@ import * as THREE from 'three';
  * threat nodes line up with the correct countries.
  */
 export function buildLandDots({
-  url = 'assets/earth-landmask.png',
+  url = '/assets/earth-landmask.png',
   radius = 2.0,
   step = 1.1,          // degrees between samples (smaller = denser)
   color = 0x3fb6d6,

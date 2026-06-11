@@ -82,7 +82,7 @@ export class ThreatGlobe {
 
     // Dotted "continents" — sampled from an equirectangular land mask so real
     // countries/coastlines are visible instead of a random scatter.
-    buildLandDots({ url: 'assets/earth-landmask.png', radius: this.radius, step: 1.05, color: 0x2f9ab0, size: 0.02, opacity: 0.62 })
+    buildLandDots({ url: '/assets/earth-landmask.png', radius: this.radius, step: 1.05, color: 0x2f9ab0, size: 0.02, opacity: 0.62 })
       .then(({ points, dispose }) => {
         if (!this.root) { dispose(); return; }
         this._land = points;
