@@ -35,10 +35,20 @@ export class Router {
     if (this.current?.destroy) this.current.destroy();
     this.outlet.innerHTML = '';
 
-    const page = route.factory();
-    page.mount(this.outlet);
-    this.current = page;
-
-    bus.emit('route:change', { path, title: route.title });
+    try {
+      const page = route.factory();
+      page.mount(this.outlet);
+      this.current = page;
+      bus.emit('route:change', { path, title: route.title });
+    } catch (err) {
+      console.error('[router] failed to mount route', path, err);
+      this.outlet.innerHTML = `
+        <div class="glass glass--cyan holo" style="max-width:720px;margin:24px;padding:24px">
+          <div class="mono" style="font-size:.62rem;letter-spacing:2px;color:var(--sev-crit);text-transform:uppercase;margin-bottom:10px">Route Module Failed</div>
+          <h2 style="margin:0 0 10px;font-family:var(--font-display);font-size:1.1rem">${route.title}</h2>
+          <p class="dim" style="margin:0;line-height:1.6">${err?.message || 'The page could not be rendered.'}</p>
+        </div>`;
+      bus.emit('route:change', { path, title: route.title });
+    }
   }
 }

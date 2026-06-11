@@ -1,5 +1,5 @@
 import { CyberGlobe } from './components/CyberGlobe.js';
-import { AuthGate, appUrl } from './core/authGuard.js';
+import { AuthGate, appUrl } from './core/authGuard.js?v=auth-fix-3';
 
 /* ── Mobile nav toggle ──────────────────────────────────── */
 const menuBtn = document.getElementById('lp-menu-btn');

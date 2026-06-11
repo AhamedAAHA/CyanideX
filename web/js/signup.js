@@ -1,5 +1,5 @@
-import { getSupabase, loadProfile, saveSession, enterApp } from './core/supabaseAuth.js';
-import { clearAuthState } from './core/authGuard.js';
+import { getSupabase, loadProfile, saveSession, enterApp, createDemoSession, restoreDemoSession } from './core/supabaseAuth.js?v=auth-fix-3';
+import { clearAuthState } from './core/authGuard.js?v=auth-fix-3';
 
 class SignUpController {
   constructor() {
@@ -13,7 +13,16 @@ class SignUpController {
 
   async init() {
     this.supabase = await getSupabase();
-    if (!this.supabase) this.showError('Supabase is not configured.');
+
+    if (!this.supabase) {
+      if (restoreDemoSession()) {
+        window.location.replace('app.html#/command-center');
+        return;
+      }
+      this.form?.addEventListener('submit', (e) => { e.preventDefault(); this.signup(); });
+      this.form?.addEventListener('input', () => this.errorEl?.classList.add('hidden'));
+      return;
+    }
 
     const { data } = this.supabase ? await this.supabase.auth.getSession() : { data: null };
     const session = data?.session || null;
@@ -61,7 +70,11 @@ class SignUpController {
     if (!name || !email || !password) return this.showError('All fields are required.');
     if (password.length < 8) return this.showError('Password must be at least 8 characters.');
     if (password !== confirm) return this.showError('Passwords do not match.');
-    if (!this.supabase) return this.showError('Auth service unavailable.');
+    if (!this.supabase) {
+      createDemoSession({ email, name, role: 'Viewer' });
+      enterApp(document.querySelector('.auth-card'));
+      return;
+    }
 
     this.submitBtn.disabled = true;
     this.submitBtn.textContent = 'CREATING ACCOUNT…';

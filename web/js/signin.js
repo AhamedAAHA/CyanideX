@@ -1,5 +1,5 @@
-import { getSupabase, loadProfile, saveSession, enterApp } from './core/supabaseAuth.js';
-import { consumeAuthNotice, clearAuthState } from './core/authGuard.js';
+import { getSupabase, loadProfile, saveSession, enterApp, createDemoSession, restoreDemoSession } from './core/supabaseAuth.js?v=auth-fix-3';
+import { consumeAuthNotice, clearAuthState } from './core/authGuard.js?v=auth-fix-3';
 
 class SignInController {
   constructor() {
@@ -12,10 +12,18 @@ class SignInController {
 
   async init() {
     this.supabase = await getSupabase();
-    if (!this.supabase) this.showError('Supabase is not configured.');
 
     const notice = consumeAuthNotice();
     if (notice) this.showError(notice);
+
+    if (!this.supabase) {
+      if (restoreDemoSession()) {
+        window.location.replace('app.html#/command-center');
+        return;
+      }
+      this.bind();
+      return;
+    }
 
     const { data } = this.supabase ? await this.supabase.auth.getSession() : { data: null };
     const session = data?.session || null;
@@ -42,8 +50,10 @@ class SignInController {
 
   bind() {
     this.form?.addEventListener('submit', (e) => { e.preventDefault(); this.login(); });
+    this.form?.addEventListener('input', () => this.clearError());
     document.querySelectorAll('[data-fill-email]').forEach((btn) => {
       btn.addEventListener('click', () => {
+        this.clearError();
         document.getElementById('email').value = btn.dataset.fillEmail;
         document.getElementById('password').value = btn.dataset.fillPass;
       });
@@ -66,7 +76,11 @@ class SignInController {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return this.showError('Please enter a valid email address.');
     }
-    if (!this.supabase) return this.showError('Auth service unavailable.');
+    if (!this.supabase) {
+      createDemoSession({ email });
+      enterApp(document.querySelector('.auth-card'));
+      return;
+    }
 
     this.submitBtn.disabled = true;
     this.submitBtn.textContent = 'AUTHENTICATING…';

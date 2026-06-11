@@ -1,4 +1,4 @@
-import { getSupabase, loadProfile, saveSession, clearSessionCache } from './supabaseAuth.js';
+import { getSupabase, loadProfile, saveSession, clearSessionCache, restoreDemoSession } from './supabaseAuth.js?v=auth-fix-3';
 
 export const AUTH_REQUIRED_MESSAGE = 'Authentication required. Please sign in to access CyanideX OS.';
 const AUTH_NOTICE_KEY = 'cyanidex.auth.notice';
@@ -26,11 +26,6 @@ async function validateSession(supabase) {
   const session = data?.session || null;
   if (!session) return null;
 
-  if (session.expires_at && Date.now() >= session.expires_at * 1000) {
-    await supabase.auth.signOut({ scope: 'global' }).catch(() => {});
-    return null;
-  }
-
   const { data: userData, error } = await supabase.auth.getUser();
   const user = userData?.user || null;
   if (error || !user) return null;
@@ -54,7 +49,10 @@ export class AuthGate {
 
   async ensureAuthenticated({ notice = AUTH_REQUIRED_MESSAGE, redirect = true } = {}) {
     const supabase = await this.getClient();
-    if (!supabase) return this.#fail(notice, redirect);
+    if (!supabase) {
+      const demoAuth = restoreDemoSession();
+      return demoAuth || this.#fail(notice, redirect);
+    }
 
     const auth = await validateSession(supabase);
     if (!auth) return this.#fail(notice, redirect);
@@ -65,6 +63,8 @@ export class AuthGate {
   async hydrateSession({ fallbackEmail = '', redirectOnFailure = true } = {}) {
     const auth = await this.ensureAuthenticated({ redirect: redirectOnFailure });
     if (!auth) return null;
+    if (!this.supabase && auth.profile) return auth;
+
     const profile = await loadProfile(
       this.supabase,
       auth.user.id,

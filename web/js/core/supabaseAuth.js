@@ -1,10 +1,12 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/+esm';
 
 let _client = null;
+const SESSION_KEY = 'cyanidex.session';
+const DEMO_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 export async function getSupabase() {
   if (_client) return _client;
-  const cfg = await fetch('/api/config/public').then((r) => r.json());
+  const cfg = await fetch('/api/config/public').then((r) => r.json()).catch(() => ({}));
   if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return null;
   _client = createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
     auth: {
@@ -14,6 +16,72 @@ export async function getSupabase() {
     },
   });
   return _client;
+}
+
+function demoRoleFromEmail(email) {
+  const normalized = String(email || '').toLowerCase();
+  if (normalized.includes('admin')) return 'Admin';
+  if (normalized.includes('analyst')) return 'Analyst';
+  return 'Viewer';
+}
+
+function demoNameFromEmail(email) {
+  const local = String(email || 'operator').split('@')[0] || 'operator';
+  return local
+    .replace(/^cyanidex[._-]?/i, '')
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ') || 'Demo Operator';
+}
+
+function readSessionCache() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); }
+  catch { return null; }
+}
+
+export function restoreDemoSession() {
+  const cached = readSessionCache();
+  if (!cached || cached.mode !== 'demo') return null;
+  if (cached.expires_at && Date.now() >= cached.expires_at * 1000) {
+    clearSessionCache();
+    return null;
+  }
+
+  const profile = {
+    email: cached.email,
+    name: cached.name || demoNameFromEmail(cached.email),
+    role: cached.role || 'Viewer',
+  };
+  return {
+    session: {
+      access_token: cached.access_token,
+      expires_at: cached.expires_at,
+    },
+    user: {
+      id: cached.id,
+      email: cached.email,
+      user_metadata: {
+        full_name: profile.name,
+        role: profile.role,
+      },
+    },
+    profile,
+  };
+}
+
+export function createDemoSession({ email, name = '', role = '' }) {
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  const profile = {
+    email: cleanEmail,
+    name: name || demoNameFromEmail(cleanEmail),
+    role: role || demoRoleFromEmail(cleanEmail),
+  };
+  const expires_at = Math.floor(Date.now() / 1000) + DEMO_TTL_SECONDS;
+  const id = `demo-${cleanEmail.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'operator'}`;
+  const access_token = `demo-${globalThis.crypto?.randomUUID?.() || Date.now()}`;
+  saveSession({ id, ...profile, access_token, expires_at, mode: 'demo' });
+  return restoreDemoSession();
 }
 
 export async function loadProfile(supabase, userId, fallbackEmail, authUser = null) {
@@ -58,15 +126,15 @@ export async function loadProfile(supabase, userId, fallbackEmail, authUser = nu
   throw new Error(error?.message || 'Could not load operator profile.');
 }
 
-export function saveSession({ id, email, name, role, access_token }) {
-  localStorage.setItem('cyanidex.session', JSON.stringify({
-    id, email, name, role, access_token,
+export function saveSession({ id, email, name, role, access_token, expires_at = null, mode = 'supabase' }) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    id, email, name, role, access_token, expires_at, mode,
     issued_at: new Date().toISOString(),
   }));
 }
 
 export function clearSessionCache() {
-  localStorage.removeItem('cyanidex.session');
+  localStorage.removeItem(SESSION_KEY);
 }
 
 export async function logout() {

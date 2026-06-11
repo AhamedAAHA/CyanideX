@@ -22,14 +22,31 @@ export class ThreatGlobePage extends Component {
   }
 
   afterRender() {
-    this.globe = new ThreatGlobe(this.$('#globe-stage'), { radius: 2.1 });
-    this.onDestroy(() => this.globe.destroy());
+    try {
+      this.globe = new ThreatGlobe(this.$('#globe-stage'), { radius: 2.1 });
+      this.onDestroy(() => this.globe.destroy());
+    } catch (err) {
+      this.renderGlobeFallback(err);
+      this.globe = null;
+    }
     this.load();
+  }
+
+  renderGlobeFallback(err) {
+    const el = this.$('#globe-stage');
+    if (!el) return;
+    el.innerHTML = `
+      <div style="height:100%;display:grid;place-items:center;text-align:center;padding:24px">
+        <div>
+          <div class="mono" style="font-size:.62rem;letter-spacing:2px;color:var(--sev-high);text-transform:uppercase;margin-bottom:10px">WebGL Unavailable</div>
+          <p class="dim" style="max-width:460px;margin:0 auto;line-height:1.6">${err?.message || 'The 3D globe could not start in this browser context.'}</p>
+        </div>
+      </div>`;
   }
 
   async load() {
     const data = await api.globe();
-    this.globe.setData({ nodes: data.nodes, paths: data.paths });
+    this.globe?.setData({ nodes: data.nodes, paths: data.paths });
     this.$('#path-count').textContent = data.paths.length + ' ACTIVE';
     this.$('#path-list').innerHTML = data.paths.map((p) => `
       <div class="feed-item" style="flex-direction:column;align-items:flex-start;gap:6px">

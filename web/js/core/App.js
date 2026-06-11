@@ -1,12 +1,12 @@
-import { Router } from './Router.js';
+import { Router } from './Router.js?v=auth-fix-3';
 import { bus } from './EventBus.js';
 import { store } from './Store.js';
-import { logout } from './supabaseAuth.js';
+import { logout } from './supabaseAuth.js?v=auth-fix-3';
 import { voice } from './VoiceController.js';
-import { AuthGate, AUTH_REQUIRED_MESSAGE, setAuthNotice } from './authGuard.js';
+import { AuthGate, AUTH_REQUIRED_MESSAGE, setAuthNotice } from './authGuard.js?v=auth-fix-3';
 
-import { CommandCenter } from '../pages/CommandCenter.js';
-import { ThreatGlobePage } from '../pages/ThreatGlobePage.js';
+import { CommandCenter } from '../pages/CommandCenter.js?v=auth-fix-3';
+import { ThreatGlobePage } from '../pages/ThreatGlobePage.js?v=auth-fix-3';
 import { OsintSignals } from '../pages/OsintSignals.js';
 import { AiForecasting } from '../pages/AiForecasting.js';
 import { RiskDna } from '../pages/RiskDna.js';
@@ -69,6 +69,7 @@ export class App {
     this.renderShell();
     this.router = new Router(this.routes, document.getElementById('view'), {
       beforeResolve: async () => {
+        if (this.session) return true;
         const verified = await this.authGate.ensureAuthenticated({ notice: AUTH_REQUIRED_MESSAGE });
         return Boolean(verified);
       },

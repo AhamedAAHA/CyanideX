@@ -3,6 +3,14 @@ import { aiml } from './aiml.service.js';
 import * as fb from '../data/fallback.js';
 import { supabase } from '../lib/supabase.js';
 
+const withTimeout = (promise, ms, label) => {
+  let timeout;
+  const timer = new Promise((_, reject) => {
+    timeout = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+  });
+  return Promise.race([promise, timer]).finally(() => clearTimeout(timeout));
+};
+
 /**
  * Intelligence pipeline orchestrator.
  *
@@ -25,8 +33,22 @@ class ForecastingPipeline {
   }
 
   async refresh() {
-    const { signals, source } = await brightData.collectSignals({ limit: 48 });
-    const analyses = await aiml.analyzeBatch(signals.slice(0, 18));
+    const collected = await withTimeout(
+      brightData.collectSignals({ limit: 48 }),
+      4_000,
+      'Bright Data collection'
+    ).catch((err) => ({
+      source: 'simulated-timeout-fallback',
+      error: err.message,
+      signals: fb.generateSignals(48),
+    }));
+
+    const { signals, source } = collected;
+    const analyses = await withTimeout(
+      aiml.analyzeBatch(signals.slice(0, 18)),
+      8_000,
+      'AIML analysis'
+    ).catch(() => signals.slice(0, 18).map((s) => fb.analyzeSignal(s)));
     const heatmap = fb.regionRiskHeatmap(signals);
     const attackPaths = fb.generateAttackPaths(signals);
     const riskDna = signals.slice(0, 12).map((s) => fb.riskDna(s));

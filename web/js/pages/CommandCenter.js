@@ -71,16 +71,33 @@ export class CommandCenter extends Component {
   }
 
   afterRender() {
-    this.globe = new ThreatGlobe(this.$('#cc-globe'));
-    this.onDestroy(() => this.globe.destroy());
+    try {
+      this.globe = new ThreatGlobe(this.$('#cc-globe'));
+      this.onDestroy(() => this.globe.destroy());
+    } catch (err) {
+      this.renderGlobeFallback('#cc-globe', err);
+      this.globe = null;
+    }
     this.load();
     this.startFeed();
+  }
+
+  renderGlobeFallback(selector, err) {
+    const el = this.$(selector);
+    if (!el) return;
+    el.innerHTML = `
+      <div style="height:100%;display:grid;place-items:center;text-align:center;padding:22px">
+        <div>
+          <div class="mono" style="font-size:.62rem;letter-spacing:2px;color:var(--sev-high);text-transform:uppercase;margin-bottom:10px">WebGL Unavailable</div>
+          <p class="dim" style="max-width:440px;margin:0 auto;line-height:1.6">${err?.message || 'The 3D globe could not start in this browser context.'}</p>
+        </div>
+      </div>`;
   }
 
   async load() {
     try {
       const [overview, globe, tomorrow] = await Promise.all([api.overview(), api.globe(), api.tomorrow()]);
-      this.globe.setData({ nodes: globe.nodes, paths: globe.paths });
+      this.globe?.setData({ nodes: globe.nodes, paths: globe.paths });
       this.renderStats(overview.stats);
       this.$('#cc-warroom').textContent = overview.war_room_summary;
       this.$('#cc-assistant').textContent = overview.briefing_headline;
