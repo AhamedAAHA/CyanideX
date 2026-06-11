@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyanideX // Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+  <div class="cx-backdrop"></div>
+  <div class="cx-scanlines"></div>
+
+  <main class="auth">
+    <div class="auth-field">
+      <span class="ringpulse"></span>
+      <span class="ringpulse"></span>
+      <span class="ringpulse"></span>
+    </div>
+
+    <a href="index.html" class="auth-back mono">← Back to Main</a>
+
+    <div class="auth-hero cx-enter">
+      <a href="index.html" class="brand-logo" title="Back to Main Page">
+        <img class="cx-logo cx-logo--auth" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
+      </a>
+      <p class="auth-sub">SIGN IN · EMAIL ACCESS ONLY</p>
+    </div>
+
+    <section class="glass glass--cyan holo auth-card cx-enter">
+      <form id="login-form" autocomplete="off">
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input class="input" id="email" type="email" placeholder="cyanidex.analyst@gmail.com" autocomplete="email" inputmode="email" spellcheck="false" required />
+        </div>
+        <div class="field">
+          <label for="password">Access Key</label>
+          <input class="input" id="password" type="password" placeholder="••••••••••" required />
+        </div>
+
+        <p id="auth-error" class="auth-error hidden"></p>
+
+        <button class="btn btn--primary" style="width:100%" type="submit">INITIALISE SESSION</button>
+      </form>
+
+      <div class="auth-accounts">
+        <div class="mono auth-accounts-label">QUICK FILL · DEMO EMAIL ACCOUNTS</div>
+        <div class="auth-accounts-row">
+          <button type="button" class="role-pick" data-fill-email="cyanidex.admin@gmail.com" data-fill-pass="Cy4n1d3X!Admin">Admin</button>
+          <button type="button" class="role-pick" data-fill-email="cyanidex.analyst@gmail.com" data-fill-pass="Cy4n1d3X!Analyst">Analyst</button>
+          <button type="button" class="role-pick" data-fill-email="cyanidex.viewer@gmail.com" data-fill-pass="Cy4n1d3X!Viewer">Viewer</button>
+        </div>
+      </div>
+
+      <p class="auth-switch">
+        No account? <a href="signup.html">Sign Up</a>
+      </p>
+      <div class="auth-foot">CYANIDEX OS v1.0 · DEFENSIVE INTELLIGENCE ONLY</div>
+    </section>
+  </main>
+
+  <script type="module" src="js/signin.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+/* ───────────────────────────────────────────────────────────
+   CyanideX — Dark glass login with animated security grid
+   ─────────────────────────────────────────────────────────── */
+.auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 24px;
+  position: relative;
+  overflow-y: auto;
+  z-index: 0;
+}
+
+/* animated radar/grid security field */
+.auth-field {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden;
+}
+.auth-field .ringpulse {
+  position: absolute; top: 50%; left: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  transform: translate(-50%, -50%);
+  animation: ringExpand 5s ease-out infinite;
+}
+.auth-field .ringpulse:nth-child(2) { animation-delay: 1.6s; }
+.auth-field .ringpulse:nth-child(3) { animation-delay: 3.2s; }
+@keyframes ringExpand {
+  0% { width: 40px; height: 40px; opacity: 0.8; }
+  100% { width: 130vmax; height: 130vmax; opacity: 0; }
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 42px 38px 36px;
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+.auth-card.glass {
+  overflow: visible;
+}
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.auth-sub {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin: 8px 0 24px;
+  text-align: center;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 7px;
+}
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 400;
+  transition: all var(--speed);
+}
+.auth .btn {
+  font-weight: 500;
+}
+.input:focus { outline: none; border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+.auth-error {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--danger);
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 59, 92, 0.35);
+  background: rgba(255, 59, 92, 0.08);
+}
+.auth-accounts {
+  margin: 18px 0 4px;
+}
+.auth-accounts-label {
+  font-size: 0.6rem;
+  color: var(--text-faint);
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  font-weight: 400;
+  text-align: center;
+}
+.auth-accounts-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.role-pick {
+  flex: 1;
+  min-width: 88px;
+  text-align: center;
+  cursor: pointer;
+  padding: 9px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.2);
+  font-family: var(--font-head);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  transition: all var(--speed);
+}
+.role-pick:hover {
+  color: var(--text);
+  border-color: var(--glass-border-strong);
+  background: rgba(0, 229, 255, 0.08);
+}
+
+.auth-hero .brand-logo {
+  display: block;
+  cursor: pointer;
+  transition: opacity var(--speed), filter var(--speed);
+}
+.auth-hero .brand-logo:hover {
+  opacity: 0.9;
+  filter: drop-shadow(0 0 18px rgba(0, 229, 255, 0.5));
+}
+
+.auth-back {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  z-index: 3;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  transition: color var(--speed);
+}
+.auth-back:hover { color: var(--cyan); }
+
+.auth-switch {
+  margin-top: 16px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+.auth-switch a { color: var(--cyan); }
+
+.auth-success {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ok);
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(37, 245, 164, 0.35);
+  background: rgba(37, 245, 164, 0.08);
+}
+
+.auth-foot { margin-top: 20px; text-align: center; font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-faint); }
+.auth-hint { margin-top: 16px; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-faint); text-align: center; line-height: 1.6; }

@@ -1,0 +1,62 @@
+/* ───────────────────────────────────────────────────────────
+   CyanideX — Design Tokens
+   Dark cyber theme · cyan / toxic green / deep black
+   ─────────────────────────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --void: #03060a;
+  --bg-0: #05080f;
+  --bg-1: #070c16;
+  --bg-2: #0a1220;
+  --panel: rgba(12, 22, 38, 0.55);
+  --panel-solid: #0b1422;
+
+  /* Accents */
+  --cyan: #00e5ff;
+  --cyan-dim: #0bb6cc;
+  --toxic: #b6ff3a;
+  --toxic-dim: #7fd400;
+  --magenta: #ff2bd6;
+  --amber: #ffb12b;
+  --danger: #ff3b5c;
+  --ok: #25f5a4;
+
+  /* Severity scale */
+  --sev-low: #25f5a4;
+  --sev-med: #ffd23b;
+  --sev-high: #ff8a3b;
+  --sev-crit: #ff3b5c;
+
+  /* Text */
+  --text: #d8f4ff;
+  --text-dim: #7e9bb3;
+  --text-faint: #4d6378;
+
+  /* Glass */
+  --glass-border: rgba(0, 229, 255, 0.16);
+  --glass-border-strong: rgba(0, 229, 255, 0.38);
+  --glass-bg: linear-gradient(160deg, rgba(13, 27, 46, 0.66), rgba(6, 12, 22, 0.42));
+  --glass-blur: 18px;
+
+  /* Glow */
+  --glow-cyan: 0 0 18px rgba(0, 229, 255, 0.45);
+  --glow-toxic: 0 0 18px rgba(182, 255, 58, 0.4);
+  --glow-soft: 0 8px 40px rgba(0, 0, 0, 0.55);
+
+  /* Typography — hacker / terminal monospace stack */
+  --font-display: 'Orbitron', 'JetBrains Mono', monospace;
+  --font-head: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  --font-body: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  --font-mono: 'Share Tech Mono', 'JetBrains Mono', monospace;
+
+  /* Geometry */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-lg: 22px;
+  --gap: 18px;
+  --rail: 248px;
+  --topbar: 64px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --speed: 0.35s;
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyanideX // Threat Forecasting Intelligence OS</title>
+  <meta name="description" content="CyanideX — Multi-Modal Cyber Threat Forecasting & Intelligence OS" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+  <script type="importmap">
+  { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div class="landing">
+    <div id="landing-3d"></div>
+
+    <div class="landing-overlay">
+      <div class="landing-shell">
+        <nav class="landing-nav">
+          <a href="index.html" class="landing-nav-brand" title="CyanideX Home">
+            <span class="landing-nav-title">CyanideX OS</span>
+          </a>
+          <span class="spacer"></span>
+          <button class="landing-menu-btn" id="landing-menu-btn" type="button" aria-label="Open navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+          </button>
+          <div class="landing-nav-menu" id="landing-nav-menu">
+            <a class="nav-link is-active" href="#top">Overview</a>
+            <a class="nav-link" href="#capabilities">Capabilities</a>
+            <a class="nav-link nav-cta" href="signin.html">Sign In</a>
+            <a class="btn btn--primary btn--sm" href="signup.html">Sign Up</a>
+          </div>
+        </nav>
+
+        <main class="landing-main">
+          <section class="landing-hero" id="top">
+            <div class="hero-left">
+              <img class="cx-logo cx-logo--hero" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
+              <div class="eyebrow">◈ Multi-Modal Threat Forecasting OS</div>
+              <h1>Predict attacks<br />before they <em>strike</em></h1>
+              <p class="lead">
+                CyanideX fuses OSINT intelligence, AI threat forecasting, voice command control,
+                3D global visualisation and autonomous executive reporting into one defensive cyber operating system.
+              </p>
+
+              <div class="landing-chips">
+                <span class="chip">3D Threat Globe</span>
+                <span class="chip">OSINT Engine</span>
+                <span class="chip">AI Forecasting</span>
+                <span class="chip">Risk DNA</span>
+                <span class="chip">Voice Intel</span>
+                <span class="chip">Executive Briefings</span>
+              </div>
+
+              <div class="landing-actions">
+                <a class="btn btn--primary" href="signin.html">Sign In</a>
+                <a class="btn btn--ghost" href="signup.html">Create Account</a>
+                <a class="btn btn--toxic btn--sm" id="enter-command-center" href="signin.html">Enter Command Center</a>
+              </div>
+            </div>
+
+            <div class="hero-right" aria-hidden="true"></div>
+          </section>
+
+          <div class="landing-stats" id="landing-stats">
+            <div class="landing-stat">
+              <div class="label">Active Signals</div>
+              <div class="value" id="stat-signals">—</div>
+            </div>
+            <div class="landing-stat">
+              <div class="label">Critical Threats</div>
+              <div class="value toxic" id="stat-critical">—</div>
+            </div>
+            <div class="landing-stat">
+              <div class="label">Global Posture</div>
+              <div class="value" id="stat-posture">—</div>
+            </div>
+            <div class="landing-stat">
+              <div class="label">AI Forecasts</div>
+              <div class="value toxic" id="stat-forecasts">—</div>
+            </div>
+          </div>
+
+          <section class="landing-capabilities" id="capabilities">
+            <article class="capability-card">
+              <h2>Threat Detection</h2>
+              <p>Live OSINT feeds, emerging signal clustering, and confidence-ranked anomaly surfacing.</p>
+            </article>
+            <article class="capability-card">
+              <h2>Forecasting</h2>
+              <p>Probability-based attack forecasting with trend deltas and confidence windows.</p>
+            </article>
+            <article class="capability-card">
+              <h2>Executive Intel</h2>
+              <p>Concise briefings, incident summaries, and regional risk posture snapshots.</p>
+            </article>
+          </section>
+        </main>
+
+        <div class="landing-foot">CYANIDEX OS v1.0 · DEFENSIVE INTELLIGENCE ONLY · NO OFFENSIVE CAPABILITIES</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/landing.js"></script>
+</body>
+</html>
