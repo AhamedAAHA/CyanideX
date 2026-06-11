@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="cx-html">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
   <title>CyanideX // Threat Forecasting Intelligence OS</title>
-  <meta name="description" content="CyanideX — Multi-Modal Cyber Threat Forecasting & Intelligence OS" />
+  <meta name="description" content="CyanideX — Multi-Modal Cyber Threat Forecasting & Intelligence OS. OSINT fusion, AI attack forecasting, 3D threat globe, voice intel and autonomous executive briefings." />
+  <meta name="theme-color" content="#03060a" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
@@ -17,97 +18,283 @@
   </script>
 </head>
 <body>
-  <div class="landing">
-    <div id="landing-3d"></div>
+  <div class="cx-backdrop" aria-hidden="true"></div>
+  <div class="cx-scanlines" aria-hidden="true"></div>
 
-    <div class="landing-overlay">
-      <div class="landing-shell">
-        <nav class="landing-nav">
-          <a href="index.html" class="landing-nav-brand" title="CyanideX Home">
-            <span class="landing-nav-title">CyanideX OS</span>
-          </a>
-          <span class="spacer"></span>
-          <button class="landing-menu-btn" id="landing-menu-btn" type="button" aria-label="Open navigation" aria-expanded="false">
-            <span></span>
-            <span></span>
-          </button>
-          <div class="landing-nav-menu" id="landing-nav-menu">
-            <a class="nav-link is-active" href="#top">Overview</a>
-            <a class="nav-link" href="#capabilities">Capabilities</a>
-            <a class="nav-link nav-cta" href="signin.html">Sign In</a>
-            <a class="btn btn--primary btn--sm" href="signup.html">Sign Up</a>
-          </div>
-        </nav>
+  <!-- ── Navbar ─────────────────────────────────────────── -->
+  <header class="lp-nav" id="top">
+    <div class="lp-nav-inner">
+      <a href="index.html" class="lp-brand" title="CyanideX Home">
+        <img class="cx-logo lp-brand-logo" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
+      </a>
 
-        <main class="landing-main">
-          <section class="landing-hero" id="top">
-            <div class="hero-left">
-              <img class="cx-logo cx-logo--hero" src="assets/cyanidex-logo-ui.png" alt="CyanideX" />
-              <div class="eyebrow">◈ Multi-Modal Threat Forecasting OS</div>
-              <h1>Predict attacks<br />before they <em>strike</em></h1>
-              <p class="lead">
-                CyanideX fuses OSINT intelligence, AI threat forecasting, voice command control,
-                3D global visualisation and autonomous executive reporting into one defensive cyber operating system.
-              </p>
+      <nav class="lp-nav-links" id="lp-nav-menu" aria-label="Primary">
+        <a class="lp-link" href="#globe">Globe</a>
+        <a class="lp-link" href="#feed">Threat Feed</a>
+        <a class="lp-link" href="#modules">Modules</a>
+        <a class="lp-link" href="#intel">Intel</a>
+        <a class="lp-link lp-link--ghost" href="signin.html">Sign In</a>
+        <a class="lp-link lp-link--cta" href="signup.html">Sign Up</a>
+      </nav>
 
-              <div class="landing-chips">
-                <span class="chip">3D Threat Globe</span>
-                <span class="chip">OSINT Engine</span>
-                <span class="chip">AI Forecasting</span>
-                <span class="chip">Risk DNA</span>
-                <span class="chip">Voice Intel</span>
-                <span class="chip">Executive Briefings</span>
-              </div>
-
-              <div class="landing-actions">
-                <a class="btn btn--primary" href="signin.html">Sign In</a>
-                <a class="btn btn--ghost" href="signup.html">Create Account</a>
-                <a class="btn btn--toxic btn--sm" id="enter-command-center" href="signin.html">Enter Command Center</a>
-              </div>
-            </div>
-
-            <div class="hero-right" aria-hidden="true"></div>
-          </section>
-
-          <div class="landing-stats" id="landing-stats">
-            <div class="landing-stat">
-              <div class="label">Active Signals</div>
-              <div class="value" id="stat-signals">—</div>
-            </div>
-            <div class="landing-stat">
-              <div class="label">Critical Threats</div>
-              <div class="value toxic" id="stat-critical">—</div>
-            </div>
-            <div class="landing-stat">
-              <div class="label">Global Posture</div>
-              <div class="value" id="stat-posture">—</div>
-            </div>
-            <div class="landing-stat">
-              <div class="label">AI Forecasts</div>
-              <div class="value toxic" id="stat-forecasts">—</div>
-            </div>
-          </div>
-
-          <section class="landing-capabilities" id="capabilities">
-            <article class="capability-card">
-              <h2>Threat Detection</h2>
-              <p>Live OSINT feeds, emerging signal clustering, and confidence-ranked anomaly surfacing.</p>
-            </article>
-            <article class="capability-card">
-              <h2>Forecasting</h2>
-              <p>Probability-based attack forecasting with trend deltas and confidence windows.</p>
-            </article>
-            <article class="capability-card">
-              <h2>Executive Intel</h2>
-              <p>Concise briefings, incident summaries, and regional risk posture snapshots.</p>
-            </article>
-          </section>
-        </main>
-
-        <div class="landing-foot">CYANIDEX OS v1.0 · DEFENSIVE INTELLIGENCE ONLY · NO OFFENSIVE CAPABILITIES</div>
-      </div>
+      <button class="lp-menu-btn" id="lp-menu-btn" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="lp-nav-menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-  </div>
+  </header>
+
+  <main class="lp">
+    <!-- ── Hero + Globe ─────────────────────────────────── -->
+    <section class="lp-hero" aria-labelledby="hero-title">
+      <div class="lp-hero-copy">
+        <span class="lp-eyebrow"><span class="lp-eyebrow-dot" aria-hidden="true"></span>Multi-Modal Threat Forecasting OS</span>
+        <h1 id="hero-title">Predict attacks<br />before they <em>strike</em></h1>
+        <p class="lp-lead">
+          CyanideX fuses OSINT intelligence, AI threat forecasting, voice command control,
+          3D global visualisation and autonomous executive reporting into one defensive
+          cyber operating system.
+        </p>
+
+        <div class="lp-chips">
+          <span class="chip">3D Threat Globe</span>
+          <span class="chip">OSINT Engine</span>
+          <span class="chip">AI Forecasting</span>
+          <span class="chip">Risk DNA</span>
+          <span class="chip">Voice Intel</span>
+          <span class="chip">Executive Briefings</span>
+        </div>
+
+        <div class="lp-actions">
+          <a class="btn btn--primary lp-btn" href="signin.html">Sign In</a>
+          <a class="btn btn--ghost lp-btn" href="signup.html">Create Account</a>
+          <a class="btn btn--toxic lp-btn" id="enter-command-center" href="signin.html">Enter Command Center</a>
+        </div>
+      </div>
+
+      <!-- Contained 3D globe panel with loading + error fallbacks -->
+      <div class="lp-globe glass glass--cyan holo" id="globe">
+        <div class="lp-globe-head">
+          <span class="lp-globe-title">Live Threat Globe</span>
+          <span class="lp-globe-state" id="globe-state">
+            <span class="lp-dot"></span> Connecting
+          </span>
+        </div>
+        <div class="lp-globe-stage" id="globe-stage" role="img" aria-label="Animated 3D globe visualising global cyber threat activity">
+          <div class="lp-globe-fallback" id="globe-loading">
+            <div class="lp-spinner" aria-hidden="true"></div>
+            <p>Initialising threat globe…</p>
+          </div>
+          <div class="lp-globe-fallback lp-globe-fallback--error hidden" id="globe-error">
+            <div class="lp-globe-static" aria-hidden="true"></div>
+            <p>3D rendering unavailable on this device.</p>
+            <span class="lp-globe-sub">Live intelligence still streaming below.</span>
+          </div>
+        </div>
+        <div class="lp-globe-legend">
+          <span><i class="lp-sev lp-sev--crit"></i> Critical</span>
+          <span><i class="lp-sev lp-sev--high"></i> High</span>
+          <span><i class="lp-sev lp-sev--med"></i> Elevated</span>
+          <span><i class="lp-sev lp-sev--low"></i> Watch</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Live stats strip ─────────────────────────────── -->
+    <section class="lp-stats" aria-label="Live intelligence metrics">
+      <article class="lp-stat glass">
+        <span class="lp-stat-label">Active Signals</span>
+        <span class="lp-stat-value" id="stat-signals">Monitoring</span>
+      </article>
+      <article class="lp-stat glass">
+        <span class="lp-stat-label">Critical Threats</span>
+        <span class="lp-stat-value danger" id="stat-critical">Analyzing</span>
+      </article>
+      <article class="lp-stat glass">
+        <span class="lp-stat-label">Global Posture</span>
+        <span class="lp-stat-value" id="stat-posture">Live</span>
+      </article>
+      <article class="lp-stat glass">
+        <span class="lp-stat-label">Highest-Risk Region</span>
+        <span class="lp-stat-value toxic" id="stat-region">Scanning</span>
+      </article>
+    </section>
+
+    <!-- ── Live Threat Feed ─────────────────────────────── -->
+    <section class="lp-section" id="feed" aria-labelledby="feed-title">
+      <div class="lp-section-head">
+        <div>
+          <span class="lp-kicker">Real-time OSINT</span>
+          <h2 id="feed-title">Live Threat Feed</h2>
+        </div>
+        <span class="lp-live" id="feed-live"><span class="lp-dot"></span> Streaming</span>
+      </div>
+      <div class="glass lp-feed-card">
+        <ul class="lp-feed" id="threat-feed" aria-live="polite">
+          <li class="lp-feed-item is-skeleton"><span class="skel lp-feed-skel"></span></li>
+          <li class="lp-feed-item is-skeleton"><span class="skel lp-feed-skel"></span></li>
+          <li class="lp-feed-item is-skeleton"><span class="skel lp-feed-skel"></span></li>
+          <li class="lp-feed-item is-skeleton"><span class="skel lp-feed-skel"></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── Core Intelligence Modules ────────────────────── -->
+    <section class="lp-section" id="modules" aria-labelledby="modules-title">
+      <div class="lp-section-head">
+        <div>
+          <span class="lp-kicker">Capabilities</span>
+          <h2 id="modules-title">Core Intelligence Modules</h2>
+        </div>
+      </div>
+      <div class="lp-modules">
+        <article class="glass lp-module">
+          <div class="lp-module-icon" data-icon="globe" aria-hidden="true"></div>
+          <h3>3D Threat Globe</h3>
+          <p>Geospatial visualisation of live signals and great-circle attack paths, severity-ranked in real time.</p>
+        </article>
+        <article class="glass lp-module">
+          <div class="lp-module-icon" data-icon="osint" aria-hidden="true"></div>
+          <h3>OSINT Engine</h3>
+          <p>Continuous open-source collection, clustering and confidence-ranked anomaly surfacing across regions.</p>
+        </article>
+        <article class="glass lp-module">
+          <div class="lp-module-icon" data-icon="forecast" aria-hidden="true"></div>
+          <h3>AI Forecasting</h3>
+          <p>Probability-based attack forecasting with trend deltas and confidence windows per signal.</p>
+        </article>
+        <article class="glass lp-module">
+          <div class="lp-module-icon" data-icon="dna" aria-hidden="true"></div>
+          <h3>Risk DNA</h3>
+          <p>Decomposes each threat into origin, motivation, method and impact markers for rapid triage.</p>
+        </article>
+        <article class="glass lp-module">
+          <div class="lp-module-icon" data-icon="voice" aria-hidden="true"></div>
+          <h3>Voice Intelligence</h3>
+          <p>Hands-free, read-only command control to query posture, regions and the day's highest risk.</p>
+        </article>
+        <article class="glass lp-module">
+          <div class="lp-module-icon" data-icon="brief" aria-hidden="true"></div>
+          <h3>Executive Briefings</h3>
+          <p>Autonomous daily summaries, incident reports and regional risk posture snapshots.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── Intel previews: Risk DNA + Attack Chain ──────── -->
+    <section class="lp-section" id="intel" aria-labelledby="intel-title">
+      <div class="lp-section-head">
+        <div>
+          <span class="lp-kicker">Inside the OS</span>
+          <h2 id="intel-title">Intelligence Previews</h2>
+        </div>
+      </div>
+
+      <div class="lp-intel-grid">
+        <!-- Risk DNA preview -->
+        <article class="glass holo lp-preview" aria-labelledby="dna-title">
+          <div class="lp-preview-head">
+            <h3 id="dna-title">Risk DNA</h3>
+            <span class="lp-tag" id="dna-tag">Analyzing</span>
+          </div>
+          <div class="lp-preview-body">
+            <div class="lp-dna" id="risk-dna-strands" aria-hidden="true">
+              <span class="lp-dna-bar"></span><span class="lp-dna-bar"></span>
+              <span class="lp-dna-bar"></span><span class="lp-dna-bar"></span>
+              <span class="lp-dna-bar"></span><span class="lp-dna-bar"></span>
+              <span class="lp-dna-bar"></span><span class="lp-dna-bar"></span>
+            </div>
+            <dl class="lp-dna-meta" id="risk-dna-meta">
+              <div><dt>Origin</dt><dd id="dna-origin">—</dd></div>
+              <div><dt>Motivation</dt><dd id="dna-motivation">—</dd></div>
+              <div><dt>Method</dt><dd id="dna-method">—</dd></div>
+              <div><dt>Industry</dt><dd id="dna-industry">—</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <!-- Attack chain preview -->
+        <article class="glass holo lp-preview" aria-labelledby="chain-title">
+          <div class="lp-preview-head">
+            <h3 id="chain-title">Attack Chain Simulation</h3>
+            <span class="lp-tag" id="chain-tag">Modeling</span>
+          </div>
+          <div class="lp-preview-body">
+            <ol class="lp-chain" id="attack-chain" aria-live="polite">
+              <li class="lp-chain-step is-skeleton"><span class="skel lp-chain-skel"></span></li>
+              <li class="lp-chain-step is-skeleton"><span class="skel lp-chain-skel"></span></li>
+              <li class="lp-chain-step is-skeleton"><span class="skel lp-chain-skel"></span></li>
+            </ol>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── Voice + Executive briefing ───────────────────── -->
+    <section class="lp-section" aria-labelledby="ops-title">
+      <div class="lp-section-head">
+        <div>
+          <span class="lp-kicker">Command Surface</span>
+          <h2 id="ops-title">Voice &amp; Executive Intel</h2>
+        </div>
+      </div>
+
+      <div class="lp-ops-grid">
+        <!-- Voice intelligence panel -->
+        <article class="glass holo lp-voice" aria-labelledby="voice-title">
+          <div class="lp-preview-head">
+            <h3 id="voice-title">Voice Intelligence</h3>
+            <span class="lp-tag">Read-only</span>
+          </div>
+          <div class="lp-voice-body">
+            <div class="lp-voice-core" aria-hidden="true">
+              <span class="lp-voice-ring"></span>
+              <span class="lp-voice-wave"></span>
+            </div>
+            <div class="lp-voice-copy">
+              <p class="lp-voice-prompt">"CyanideX, what's today's highest risk?"</p>
+              <ul class="lp-voice-cmds">
+                <li>Highest risk threat</li>
+                <li>Regional risk breakdown</li>
+                <li>Generate executive briefing</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- Executive briefing preview -->
+        <article class="glass holo lp-brief" aria-labelledby="brief-title">
+          <div class="lp-preview-head">
+            <h3 id="brief-title">Executive Briefing</h3>
+            <span class="lp-tag" id="brief-tag">Live</span>
+          </div>
+          <div class="lp-brief-body">
+            <p class="lp-brief-headline" id="brief-headline">
+              <span class="skel lp-brief-skel"></span>
+            </p>
+            <p class="lp-brief-summary" id="brief-summary">
+              <span class="skel lp-brief-skel"></span>
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── CTA ──────────────────────────────────────────── -->
+    <section class="lp-cta" aria-labelledby="cta-title">
+      <div class="glass glass--cyan lp-cta-card holo">
+        <h2 id="cta-title">Step into the Command Center</h2>
+        <p>Defensive cyber intelligence, forecasting and executive reporting — unified in one operating system.</p>
+        <div class="lp-actions lp-actions--center">
+          <a class="btn btn--primary lp-btn" href="signup.html">Create Account</a>
+          <a class="btn btn--ghost lp-btn" href="signin.html">Sign In</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="lp-foot">
+      CYANIDEX OS v1.0 · DEFENSIVE INTELLIGENCE ONLY · NO OFFENSIVE CAPABILITIES
+    </footer>
+  </main>
 
   <script type="module" src="js/landing.js"></script>
 </body>
