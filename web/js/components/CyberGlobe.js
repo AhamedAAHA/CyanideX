@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { buildLandDots } from './landDots.js';
 
 /**
  * CyberGlobe — contained, production-ready 3D threat globe.
@@ -107,23 +108,15 @@ export class CyberGlobe {
     this.root.add(new THREE.LineSegments(wfGeo, wfMat));
     this._disposables.push(wfGeo, wfMat);
 
-    // Stylised "landmass" point field
-    const dots = 1300;
-    const pos = new Float32Array(dots * 3);
-    for (let i = 0; i < dots; i++) {
-      const u = Math.random(), v = Math.random();
-      const theta = 2 * Math.PI * u;
-      const phi = Math.acos(2 * v - 1);
-      const rr = r * 1.004;
-      pos[i * 3] = rr * Math.sin(phi) * Math.cos(theta);
-      pos[i * 3 + 1] = rr * Math.cos(phi);
-      pos[i * 3 + 2] = rr * Math.sin(phi) * Math.sin(theta);
-    }
-    const dotsGeo = new THREE.BufferGeometry();
-    dotsGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const dotsMat = new THREE.PointsMaterial({ color: 0x3fb6d6, size: 0.02, transparent: true, opacity: 0.45, depthWrite: false });
-    this.root.add(new THREE.Points(dotsGeo, dotsMat));
-    this._disposables.push(dotsGeo, dotsMat);
+    // Real continents: dotted landmass sampled from an equirectangular map so
+    // recognisable countries appear instead of a random point cloud.
+    buildLandDots({ url: 'assets/earth-landmask.png', radius: r, step: 1.05, color: 0x4cc6e6, size: 0.022, opacity: 0.62 })
+      .then(({ points, dispose }) => {
+        if (!this.root) { dispose(); return; }
+        this._land = points;
+        this.root.add(points);
+        this._disposables.push({ dispose });
+      });
 
     // Equator + meridian accent rings
     [0, Math.PI / 2].forEach((rot, i) => {

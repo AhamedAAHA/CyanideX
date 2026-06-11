@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { bus } from '../core/EventBus.js';
+import { buildLandDots } from './landDots.js';
 
 /**
  * ThreatGlobe — animated 3D cyber threat globe.
@@ -79,16 +80,15 @@ export class ThreatGlobe {
     );
     this.root.add(wire);
 
-    // Dotted "continents" — random points across the sphere as a stylised landmass field
-    const dots = 1400;
-    const pos = new Float32Array(dots * 3);
-    for (let i = 0; i < dots; i++) {
-      const v = this._spherePoint(this.radius * 1.002);
-      pos[i * 3] = v.x; pos[i * 3 + 1] = v.y; pos[i * 3 + 2] = v.z;
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    this.root.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0x1d6f7e, size: 0.018, transparent: true, opacity: 0.55 })));
+    // Dotted "continents" — sampled from an equirectangular land mask so real
+    // countries/coastlines are visible instead of a random scatter.
+    buildLandDots({ url: 'assets/earth-landmask.png', radius: this.radius, step: 1.05, color: 0x2f9ab0, size: 0.02, opacity: 0.62 })
+      .then(({ points, dispose }) => {
+        if (!this.root) { dispose(); return; }
+        this._land = points;
+        this.root.add(points);
+        this._landDispose = dispose;
+      });
 
     // Equator + meridian accent rings
     [0, Math.PI / 2].forEach((rot, i) => {
@@ -267,6 +267,7 @@ export class ThreatGlobe {
     window.removeEventListener('resize', this._onResize);
     this._ro?.disconnect();
     this._pointerCleanup?.();
+    this._landDispose?.();
     this._clearNodes();
     this._clearArcs();
     this.renderer.dispose();
