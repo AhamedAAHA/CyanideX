@@ -142,13 +142,24 @@
 .lp-hero-copy { animation: cxFadeUp 0.7s var(--ease) both; }
 
 .lp-eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--toxic);
   margin-bottom: 18px;
+}
+.lp-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--toxic);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px var(--toxic);
+  flex: 0 0 auto;
 }
 
 .lp-hero h1 {
